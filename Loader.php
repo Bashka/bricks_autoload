@@ -18,35 +18,6 @@ class Loader{
    */
   private $pref = [];
 
-  /**
-   * Вычисляет адрес файла ресурса.
-   *
-   * @warning Файл ресурса может не располагаться по возвращаемому методом 
-   * адресу. В этом случае можно считать, что вычислить адрес файла ресурса 
-   * неудалось.
-   *
-   * @param string $resource Имя ресурса.
-   * @param string $type [optional] Расширение файла ресурса.
-   *
-   * @return string Предполагаемый адрес файла ресурса.
-   */
-  protected function path($resource, $type = 'php'){
-    if(isset($this->map[$resource])){
-      return $this->map[$resource];
-    }
-
-    $dir = '';
-    foreach($this->pref as $pref => $option){
-      if($pref === substr($resource, 0, $option['length'])){
-        $resource = substr($resource, $option['length'] + 1);
-        $dir = $option['dir'];
-        break;
-      }
-    }
-
-    return $dir . str_replace('\\', DIRECTORY_SEPARATOR, $resource) . '.' . $type;
-  }
-
   public function __construct(){
     spl_autoload_register([$this, 'load']);
   }
@@ -76,6 +47,35 @@ class Loader{
       'length' => strlen($pref),
       'dir' => $dir,
     ];
+  }
+
+  /**
+   * Вычисляет адрес файла ресурса.
+   *
+   * @warning Файл ресурса может не располагаться по возвращаемому методом 
+   * адресу. В этом случае можно считать, что вычислить адрес файла ресурса 
+   * неудалось.
+   *
+   * @param string $resource Имя ресурса.
+   * @param string $type [optional] Расширение файла ресурса.
+   *
+   * @return string Предполагаемый адрес файла ресурса.
+   */
+  public function path($resource, $type = 'php'){
+    if(isset($this->map[$resource])){
+      return $this->map[$resource];
+    }
+
+    $dir = '';
+    foreach($this->pref as $pref => $option){
+      if($pref === substr($resource, 0, $option['length'])){
+        $resource = substr($resource, $option['length'] + 1);
+        $dir = $option['dir'];
+        break;
+      }
+    }
+
+    return $dir . str_replace('\\', DIRECTORY_SEPARATOR, $resource) . '.' . $type;
   }
 
   /**
